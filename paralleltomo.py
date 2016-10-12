@@ -18,6 +18,7 @@ def paralleltomo(N=80,teta=list(range(0,179)),p=None,d=None,isDisp=0):
     x = np.arange(-N,N+1)
     y = x
 
+    # masih coba-coba
     A = 1
     b = 1
     xx = x
