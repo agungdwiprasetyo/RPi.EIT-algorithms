@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# """ Author : Agung Dwi Prasetyo """
+""" Author : Agung Dwi Prasetyo """
 
 import numpy as np
 import matplotlib as plot
