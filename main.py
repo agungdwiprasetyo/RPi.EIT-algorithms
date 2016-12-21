@@ -5,7 +5,7 @@ Forward Problem, belum sampai ke Inverse Problem karena belum menggunakan salah 
 """
 
 import mesh
-from mesh import quality # buat ngecek jumlah node dan element model citra
+from mesh.quality import fstats # buat ngecek jumlah node dan element model citra
 from eit.utils import eit_scan_lines
 from eit.fem import forward
 import eit.jac as jac 
@@ -20,7 +20,7 @@ print (elektroda)
 nodeXY = ms['node']
 numElemen = ms['element']
 
-quality.fstats(nodeXY, numElemen) # print jumlah node dan element
+fstats(nodeXY, numElemen) # print jumlah node dan element
 
 Mat1 = eit_scan_lines(16, 7) # membuat matriks diagonal yg nilainya 1 yg ukurannya sebesar 16*16
 exLine = Mat1[0].ravel()
@@ -31,7 +31,7 @@ forwardProblem = forward(ms, elektroda) # memulai forward problem
 # Memulai proses pencitraan
 x = 0.2
 y = 0.5
-d = 0.4
+d = 0.1
 alp = 10
 # ngeset anomali, nanti muncul di plot yang warna abu-abu, bertipe data Dictionary (json)
 anomaly = [{'x': x, 'y': y, 'd': d, 'alpha': alp}] # x dan y menyatakan posisi tengah dari anomali yg terbentuk, d menyatakan range
