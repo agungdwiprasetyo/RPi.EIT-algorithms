@@ -8,10 +8,10 @@
 
 | Packages |  Optional | Shell script |
 | ---- | ---- | ---- |
-| **numpy** | | ```shell sudo apt-get install python3-numpy``` |
-| **scipy** | | ```shell sudo apt-get install python3-scipy``` |
-| **matplotlib** | | ```shell sudo apt-get install python3-matplotlib``` |
-| **vispy** |  *Optional* | ```shell sudo apt-get install python3-vispy``` |
-| **pandas** | *Optional* | ```shell sudo apt-get install python3-pandas``` |
-| **xarray** | *Optional* | ```shell sudo apt-get install python3-xarray``` |
-| **distmesh** | *Optional* | ```shell sudo apt-get install python3-distmesh``` |
+| **numpy** | | ```bash sudo apt-get install python3-numpy``` |
+| **scipy** | | ```bash sudo apt-get install python3-scipy``` |
+| **matplotlib** | | ```bash sudo apt-get install python3-matplotlib``` |
+| **vispy** |  *Optional* | ```bash sudo apt-get install python3-vispy``` |
+| **pandas** | *Optional* | ```bash sudo apt-get install python3-pandas``` |
+| **xarray** | *Optional* | ```bash sudo apt-get install python3-xarray``` |
+| **distmesh** | *Optional* | ```bash sudo apt-get install python3-distmesh``` |
