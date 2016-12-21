@@ -10,7 +10,7 @@ from eit.utils import eit_scan_lines
 from eit.fem import forward
 import eit.jac as jac 
 import numpy as np
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plot
 
 jumlahElektroda = 16
 
@@ -31,8 +31,8 @@ forwardProblem = forward(ms, elektroda) # memulai forward problem
 # Memulai proses pencitraan
 x = 0.2
 y = 0.5
-d = 0.1
-alp = 10
+d = 0.3
+alp = 3
 # ngeset anomali, nanti muncul di plot yang warna abu-abu, bertipe data Dictionary (json)
 anomaly = [{'x': x, 'y': y, 'd': d, 'alpha': alp}] # x dan y menyatakan posisi tengah dari anomali yg terbentuk, d menyatakan range
 ms_baru = mesh.set_alpha(ms, anom=anomaly, background=1.0)
@@ -46,15 +46,15 @@ ff = np.real(ff) # ff di-real kan
 vf = np.linspace(min(ff), max(ff), 32) # membagi array ff dari nilai minimal ke maksimal menjadi sebanyak 32 dengan selisih tiap2 nilai sama
 # print(vf)
 # plot
-fig = plt.figure()
+fig = plot.figure()
 ax1 = fig.add_subplot(111)
-ax1.tricontour(nodeXY[:, 0], nodeXY[:, 1], numElemen, ff, vf, linewidth=0.5, cmap=plt.cm.viridis)
-ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], numElemen, np.real(tri_perm), edgecolors='k', shading='flat', alpha=0.5, cmap=plt.cm.Greys)
+ax1.tricontour(nodeXY[:, 0], nodeXY[:, 1], numElemen, ff, vf, linewidth=0.5, cmap=plot.cm.viridis)
+ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], numElemen, np.real(tri_perm), edgecolors='k', shading='flat', alpha=0.5, cmap=plot.cm.Greys)
 ax1.plot(nodeXY[elektroda, 0], nodeXY[elektroda, 1], 'ro')
 ax1.set_title('Forward Problem')
 ax1.axis('equal')
 fig.set_size_inches(6, 4)
-plt.show()
+plot.show()
 
 print("Sedang memproses inverse problem...")
 # proses inverse problem
@@ -64,10 +64,10 @@ eit = jac.JAC(ms, elektroda, exMtx=Mat1, step=1,perm=1., parser='std',p=0.30, la
 ds = eit.solve(f1.v, f0.v)
 print("Sukses.")
 # plot
-fig = plt.figure()
-plt.tripcolor(nodeXY[:, 0], nodeXY[:, 1], numElemen, np.real(ds),shading='flat', cmap=plt.cm.viridis)
-plt.colorbar()
+fig = plot.figure()
+plot.tripcolor(nodeXY[:, 0], nodeXY[:, 1], numElemen, np.real(ds),shading='flat', cmap=plot.cm.viridis)
+plot.colorbar()
 ax1.set_title('Inverse Problem')
-plt.axis('equal')
+plot.axis('equal')
 fig.set_size_inches(6, 4)
-plt.show()
+plot.show()
