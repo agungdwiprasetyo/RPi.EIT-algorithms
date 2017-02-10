@@ -14,9 +14,7 @@ from .utils import eit_scan_lines
 class JAC(object):
     """ implementing a JAC class """
 
-    def __init__(self, mesh, elPos,
-                 exMtx=None, step=1, perm=1., parser='et3',
-                 p=0.20, lamb=0.001, method='kotre'):
+    def __init__(self, mesh, elPos, exMtx=None, step=1, perm=1., parser='et3', p=0.20, lamb=0.001, method='kotre'):
         """
         JAC, default file parser is 'std'
 
