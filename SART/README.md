@@ -1,34 +1,23 @@
-pySART
-======
+# Simultaneous Algebraic Reconstruction Technique
 
 Tomographic reconstruction using the Simultaneous Algebraic Reconstruction Technique (SART) implemented in python.
 
-Refrence: Ch7. Kak & Slaney http://www.slaney.org/pct/pct-toc.html
+Library yang dibutuhkan:
+* ``` multiprocessing ```
+* ``` matplotlib ```
+* ``` numpy ```
+* ``` scipy ```
 
-Quickstart:
+Menghilangkan error ``` RuntimeError: dvipng was not able to process the following file``` ketika proses matplotlib pada python:
 
-# Generate test data
-```
-from pySART import pysart
-from skimage.transform import radon, iradon
-import phantom
-import numpy as np
-
-def generate_phantom():
-    theta = range(0,180)
-    data = np.rot90(radon(phantom.phantom(n=100),theta=theta))
-    data1 = np.zeros((data.shape[0],1,data.shape[1]))
-    data1[:,0,:] = data
-    return theta, data1
-```
-# Reconstruct the whole dataset
-```
-pysart = pysart(*generate_phantom())
-pysart.sart()
+```sh
+$ sudo apt-get install dvipng 
 ```
 
-# OR Reconstruct a single slice for 100 iterations (default:50)
-```
-pysart = pysart(*generate_phantom(), plsice = 10, iteration=100)
-pysart.sart()
-```
+## Mulai
+
+Jalankan program ``` main.py```, maka akan terjadi proses seperti berikut:
+![proses](https://github.com/agungdwiprasetyo/EIT/raw/master/SART/process.png)
+
+Gambar diatas merupakan proses dari algoritma SART. Dari setiap iterasi akan menghasilkan update citra terbaru. Citra hasil rekonstruksi yaitu seperti ditunjukkan pada gambar dibawah ini:
+![proses](https://github.com/agungdwiprasetyo/EIT/raw/master/SART/sart_0.png)
