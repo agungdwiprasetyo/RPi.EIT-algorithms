@@ -1,4 +1,4 @@
-# Python Electrical Impedance Tomography
+# Electrical Impedance Tomography
 Electrical Impedance Tomography (EIT) adalah  suatu konsep pencitraan dari distribusi resistivitas  listrik  internal  suatu objek  dengan  pengukuran  beda potensial  listrik  antar  elektrode yang  terhubung  dengan objek.  Teknik  ini  bekerja  dengan  cara  menginjeksikan  arus listrik  pada  objek  melalui elektrode yang terpasang pada permukaan objek.
 
 ![EIT](https://github.com/agungdwiprasetyo/EIT/raw/master/pic/chickentiss.jpeg)
@@ -23,6 +23,19 @@ Versi python yang digunakan yaitu Python 3.5, dan menggunakan sistem operasi Lin
 | **xarray** | ```$ sudo apt-get install python3-xarray``` |
 | **distmesh** | ```$ sudo apt-get install python3-distmesh``` |
 
+
+## Rancangan Sistem
+
+Dalam perancangan sistem ini dibagi menjadi 3 bagian utama yaitu penyelesaian Forward Problem, penyelesaian Inverse Problem, dan front-end untuk visualisasi citra. Secara garis besar, rancangan sistem dapat digambarkan sebagai berikut:
+
+![sistem](https://github.com/agungdwiprasetyo/EIT/raw/master/pic/desainsistem.jpg)
+
+1. **Penyelesaian Forward Problem:**
+Pada bagian ini, data akuisisi dari perangkat EIT akan diolah oleh sebuah single board computer. Single board computer yang digunakan yaitu Raspberry Pi. Hasil luaran dari bagian ini adalah data hasil pengolahan dengan penyelesaian Forward Problem yang menggunakan7 Finite Element Method (FEM). Data ini selanjutnya akan dikirim ke server untuk diolah lebih lanjut melalui koneksi internet.
+2. **Penyelesaian Inverse Problem:** 
+Penyelesaian Inverse Problem ini terjadi pada server. Data dari langkah pada penyelesaian Forward Problem sebelumnya akan digunakan untuk penyelesaian Inverse Problem. Data yang diolah dalam proses Inverse Problem ini sangat besar, sehingga dimungkinkan akan dilakukan pemrosesan paralel menggunakan GPU (*Graphics Processing Unit*) pada server. Hasil luaran dari bagian ini yaitu citra yang sudah terbentuk untuk selanjutnya akan ditampilkan pada aplikasi web.
+3. **Front-end untuk visualisasi citra:** 
+Bagian ini menggunakan aplikasi web untuk memvisualisasikan citra hasil rekonstruksi yang diperoleh dari proses Inverse Problem pada server. Front-end untuk membangun aplikasi web ini menggunakan AngularJS.
 
 ## Tahapan
 
