@@ -16,11 +16,8 @@ class EITBase(object):
 		self.noNum, self.dim = self.nodeXY.shape
 		self.elNum, self.nVertices = self.element.shape
 
-		self.exMat = exMat
-		self.step = step
-
 		if exMat is None:
-			exMat = EIT_scanLines(len(elPos), 8)
+			exMat = EIT_scanLines(len(elPos), 1)
 
 		if perm is None:
 			perm = np.ones_like(mesh['alpha'])
@@ -29,6 +26,9 @@ class EITBase(object):
 			self.perm = perm * np.ones(self.elNum)
 		else:
 			self.perm = perm
+			
+		self.exMat = exMat
+		self.step = step
 
 		# butuh forward problem
 		forward = Forward(mesh, elPos)
@@ -41,6 +41,3 @@ class EITBase(object):
 
 		self.params = {}
 		self.setup()
-
-	def setup(self):
-		raise NotImplementedError

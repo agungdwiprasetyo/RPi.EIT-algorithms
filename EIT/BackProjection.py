@@ -1,7 +1,7 @@
 from __future__ import division, absolute_import, print_function
 
 import numpy as np
-from .base import EITBase
+from .EITbase import EITBase
 
 class BackProjection(EITBase):
 	def setup(self, weight='none'):
