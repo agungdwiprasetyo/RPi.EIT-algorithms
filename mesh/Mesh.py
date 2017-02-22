@@ -51,7 +51,7 @@ class Mesh(object):
 		n = np.size(self.alpha)
 
 		if background is not None:
-			alpha = background*np.ones(n, dtype=np.float)
+			alpha = background*np.ones(n, dtype='complex')
 
 		if anomaly is not None:
 			for _, attr in enumerate(anomaly):
