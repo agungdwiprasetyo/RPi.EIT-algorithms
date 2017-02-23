@@ -53,4 +53,4 @@ Pada proses diatas ditampilkan matriks Jacobian yang diperoleh dari proses Finit
 
 Hasil akhir dari proses pencitraan pada EIT untuk data yang diperoleh dari hasil pengukuran tungkai hewan dapat ditunjukkan seperti gambar dibawah ini:
 
-![hasil](![proses](https://github.com/agungdwiprasetyo/EIT/raw/master/pic/TesData.png)
+![hasil](https://github.com/agungdwiprasetyo/EIT/raw/master/pic/TesData-BP.png)
