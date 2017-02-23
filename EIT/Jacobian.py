@@ -2,6 +2,7 @@ from __future__ import division, absolute_import, print_function
 
 import numpy as np
 import scipy.linalg as la
+from EIT.PDE import pdeprtni
 from .EITbase import EITBase
 
 class Jacobian(EITBase):
@@ -20,7 +21,7 @@ class Jacobian(EITBase):
         """
         # pre-compute H0 for dynamical imaging
         # H = (J.T*J + R)^(-1) * J.T
-        self.H = h_matrix(self.Jacobian, p, lamb, method)
+        self.H = h_matrix(self.jacobian, p, lamb, method)
         self.params = {
             'p': p,
             'lamb': lamb,
@@ -51,7 +52,9 @@ class Jacobian(EITBase):
         # s = -Hv
         ds = - np.dot(self.H, dv)
         # return average epsilon on element
-        return ds
+
+        hasil = pdeprtni(self.node, self.element, ds)
+        return hasil
 
     def map(self, v):
         """ return Hv """
@@ -73,7 +76,7 @@ class Jacobian(EITBase):
         else:
             dv = (v1 - v0)
         # s_r = J^Tv_r
-        ds = - np.dot(self.Jacobian.T.conjugate(), dv)
+        ds = - np.dot(self.jacobian.T.conjugate(), dv)
         # return average epsilon on element
         return ds
 
