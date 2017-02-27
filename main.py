@@ -29,10 +29,8 @@ nodeXY = mesh['node']
 element = mesh['element']
 alpha0 = createMesh.setAlpha(background=arusInjeksi)
 
-anomaly = [{'x': -0.625, 'y': 0.25, 'd': 0.3, 'alpha': 1},
-           {'x': 0.46, 'y': 0.5, 'd': 0.3, 'alpha': 1},
-           {'x': -0.4, 'y': -0.5, 'd': 0.1, 'alpha': 20},
-           {'x': 0.6, 'y': -0.3, 'd': 0.1, 'alpha': 20}]
+anomaly = [{'x': 1.3, 'y': 0.5, 'd': 0.3, 'alpha': 1},
+           {'x': 0.46, 'y': 0.5, 'd': 0.3, 'alpha': 20}]
 alpha1 = createMesh.setAlpha(anomaly=anomaly ,background=arusInjeksi) 
 
 deltaAlpha = np.real(alpha1 - alpha0)
@@ -47,29 +45,35 @@ f0 = forward.solve(exMat, step=step, perm=alpha0)
 fin = time.time()
 print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 
-# impor data from EIT instrument, and FEM result
-data = np.loadtxt("data/dataukur.txt")
-ref = np.loadtxt("data/dataref.txt")
-refFEM = f0.v
+# impor data from EIT instrument, and result from FEM
+# dataset = np.loadtxt("data/data.csv", delimiter=",")
+# dataX = dataset[1:,1]
+# print(dataX)
+data0 = np.loadtxt("data/dataPenelitian.txt")
+data2 = np.loadtxt("data/ukurmanualB.txt")
+data1 = np.loadtxt("data/phantomA.txt")
+data = np.loadtxt("data/phantomB.txt")
+ref1 = np.loadtxt("data/dataref.txt")
+ref = f0.v
 
 # ----------------------------------------- solve inverse problem with BP -------------------------------------------
 start = time.time()
 inverseBP = BackProjection(mesh=mesh, forward=f0)
-hasilBP = inverseBP.solveGramSchmidt(data, refFEM)
+hasilBP = inverseBP.solveGramSchmidt(data, ref)
 fin = time.time()
 print("Waktu Inverse Problem Solver (BP)  = %.4f" %(fin-start))
 
 # ------------------------------------------ solve inverse problem with Jacobian ------------------------------------
 start = time.time()
 inverseJAC = Jacobian(mesh=mesh, forward=f0)
-hasilJAC = inverseJAC.solve(data, refFEM)
+hasilJAC = inverseJAC.solve(data, ref)
 fin = time.time()
 print("Waktu Inverse Problem Solver (JAC) = %.4f" %(fin-start))
 
 # ------------------------------------------- solve inverse problem with GREIT -------------------------------------
 start = time.time()
 inverseGREIT = GREIT(mesh=mesh, forward=f0)
-ds = inverseGREIT.solve(data, refFEM)
+ds = inverseGREIT.solve(data, ref)
 x, y, hasilGREIT = inverseGREIT.mask_value(ds, mask_value=np.NAN)
 fin = time.time()
 print("Waktu Inverse Problem Solver (GREIT) = %.4f" %(fin-start))
