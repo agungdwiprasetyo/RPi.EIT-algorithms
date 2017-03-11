@@ -19,7 +19,7 @@ host = 'localhost'
 port = 3456
 
 socketIO = SocketIO(host, port, LoggingNamespace)
-
+socketIO.emit('raspiConnect')
 
 def run(*args):
 	print("Starting reconstruction...")
@@ -121,7 +121,7 @@ def run(*args):
 	ax4.axis('off')
 
 	print('Finish')
-	socketIO.emit('getStatus', {'status': True})
+	socketIO.emit('status', {'sukses': True})
 
 	plt.show()
 
