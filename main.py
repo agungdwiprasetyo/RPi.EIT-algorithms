@@ -12,6 +12,7 @@ from EIT.Jacobian import Jacobian
 from EIT.GREIT import GREIT
 
 from socketIO_client import SocketIO, LoggingNamespace
+from API.API import API
 
 import time
 
@@ -20,17 +21,22 @@ port = 3456
 
 socketIO = SocketIO(host, port, LoggingNamespace)
 socketIO.emit('raspiConnect', {'status': True})
+api = API()
 
 def run(*args):
 	responseData = args[0]
 	print(responseData)
-	print("Starting reconstruction...")
 	sizeImage = (12,12)
 	axisSize = [-1.2, 1.2, -1.2, 1.2]
 	jumlahElektroda = 16
 	arusInjeksi = responseData['arus'] #default 7.5 miliAmpere
 	kerapatan = responseData['kerapatan']
-	dataPhantom = responseData['data']
+	dataVolt = responseData['data']
+	algor = responseData['algor']
+	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
+	waktu = 0
+	direktori = "../rpieit-web/img/results/"
+	filename = str(datetime)+'-'+algor+'.png'
 
 	createMesh = Mesh(jumlahElektroda, h0=kerapatan)
 	mesh = createMesh.getMesh()
@@ -51,85 +57,62 @@ def run(*args):
 	exMat = EIT_scanLines(jumlahElektroda)
 
 	# solve Forward Model
+	print("Starting reconstruction with "+algor+"...")
 	start = time.time()
 	forward = Forward(mesh, elPos)
 	f0 = forward.solve(exMat, step=step, perm=alpha0)
 	fin = time.time()
+	waktu+=(fin-start)
 	print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 
 	# impor data from EIT instrument, and result from FEM
-	# dataset = np.loadtxt("data/data.csv", delimiter=",")
-	# dataX = dataset[1:,1]
-	# print(dataX)
-	data = np.loadtxt("data/phantom"+dataPhantom+".txt")
-
-	# data0 = np.loadtxt("data/dataPenelitian.txt")
-	# dataqq = np.loadtxt("data/ukurmanualBreal.txt")
-	# data2 = np.loadtxt("data/ukurmanualB.txt")
-	# dataA = np.loadtxt("data/phantomA.txt")
-	# dataB = np.loadtxt("data/phantomB.txt")
-	# data = np.loadtxt("data/phantomC.txt")
-	# dataD = np.loadtxt("data/phantomD.txt")
-	# ref1 = np.loadtxt("data/dataref.txt")
+	data = np.loadtxt("data/"+dataVolt+".txt")
 	ref = f0.v
 
 	# ----------------------------------------- solve inverse problem with BP -------------------------------------------
-	start = time.time()
-	inverseBP = BackProjection(mesh=mesh, forward=f0)
-	hasilBP = inverseBP.solveGramSchmidt(data, ref)
-	fin = time.time()
-	print("Waktu Inverse Problem Solver (BP)  = %.4f" %(fin-start))
+	if(algor=="BP"):
+		start = time.time()
+		inverseBP = BackProjection(mesh=mesh, forward=f0)
+		resInverse = inverseBP.solveGramSchmidt(data, ref)
+		fin = time.time()
+		waktu+=(fin-start)
+		print("Waktu Inverse Problem Solver (BP)  = %.4f" %(fin-start))
 
 	# ------------------------------------------ solve inverse problem with Jacobian ------------------------------------
-	# start = time.time()
-	# inverseJAC = Jacobian(mesh=mesh, forward=f0)
-	# hasilJAC = inverseJAC.solve(data, ref)
-	# fin = time.time()
-	# print("Waktu Inverse Problem Solver (JAC) = %.4f" %(fin-start))
+	elif(algor=="JAC"):
+		start = time.time()
+		inverseJAC = Jacobian(mesh=mesh, forward=f0)
+		hasilJAC = inverseJAC.solve(data, ref)
+		resInverse = np.real(hasilJAC)
+		fin = time.time()
+		waktu+=(fin-start)
+		print("Waktu Inverse Problem Solver (JAC) = %.4f" %(fin-start))
 
 	# ------------------------------------------- solve inverse problem with GREIT -------------------------------------
-	# start = time.time()
-	# inverseGREIT = GREIT(mesh=mesh, forward=f0)
-	# ds = inverseGREIT.solve(data, ref)
-	# x, y, hasilGREIT = inverseGREIT.mask_value(ds, mask_value=np.NAN)
-	# fin = time.time()
-	# print("Waktu Inverse Problem Solver (GREIT) = %.4f" %(fin-start))
+	elif(algor=="GREIT"):
+		start = time.time()
+		inverseGREIT = GREIT(mesh=mesh, forward=f0)
+		ds = inverseGREIT.solve(data, ref)
+		x, y, hasilGREIT = inverseGREIT.mask_value(ds, mask_value=np.NAN)
+		resInverse = np.real(hasilGREIT)
+		fin = time.time()
+		waktu+=(fin-start)
+		print("Waktu Inverse Problem Solver (GREIT) = %.4f" %(fin-start))
 	# ------------------------------------------------- END inverse problem --------------------------------------------
-
-	# # plot mesh
-	# fig, ax = plt.figure(figsize=sizeImage)
-	# # gs = gridspec.GridSpec(2, 2)
-
-	# # ax1 = fig.add_subplot(gs[0, 0])
-	# # ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, deltaAlpha, shading='flat')
-	# # ax1.plot(nodeXY[elPos, 0], nodeXY[elPos, 1], 'ro')
-	# # ax1.set_title(r'(a) $\Delta$ Finite Element Method')
-	# # ax1.axis(axisSize)
-	# # ax1.axis('off')
-
-	# # plot image from BP
-	# # ax2 = fig.add_subplot(gs[0, 1])
-	# im = ax.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, hasilBP)
-	# fig.set_title(r'(b) Back Projection')
-	# fig.axis(axisSize)
-	# fig.axis('off')
-	# plot
 
 	fig = plt.figure()
 	ax1 = fig.add_subplot(111)
-	im = ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, hasilBP)
+	if(algor=="GREIT"):
+		im = ax1.imshow(resInverse, interpolation='nearest')
+		# fig.colorbar(im)
+	else:
+		ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, resInverse)
 	ax1.axis('equal')
-	plt.axis([-1.5, 1.5, -1.1, 1.1])
-	fig.set_size_inches(6, 4)
-	fig.savefig('./pic/result/hasil_'+str(time.time())+'.png', dpi=300)
+	plt.axis([-1, 1, -1, 1])
+	fig.set_size_inches(6, 6)
+	plt.axis('off')
+	fig.savefig(direktori+filename, dpi=300)
 	plt.show()
-
-	# # plot image from Jacobian
-	# ax3 = fig.add_subplot(gs[1, 0])
-	# ax3.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, np.real(hasilJAC))
-	# ax3.set_title(r'(c) Jacobian')
-	# ax3.axis(axisSize)
-	# ax3.axis('off')
 
 	# # plot image from GREIT
 	# ax4 = fig.add_subplot(gs[1, 1])
@@ -138,7 +121,8 @@ def run(*args):
 	# ax4.axis('off')
 
 	print('Finish')
-	socketIO.emit('status', {'sukses': True})
+	socketIO.emit('status', {'sukses': True, 'waktu': int(waktu)})
+	api.postImage(filename, kerapatan, arusInjeksi, algor, dataVolt)
 
 	plt.show()
 
