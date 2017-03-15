@@ -14,11 +14,11 @@ from API.API import API
 
 import time
 
-host = 'localhost'
+host = 'http://localhost'
 port = 3456
 
 socketIO = SocketIO(host, port, LoggingNamespace)
-api = API()
+api = API(host, port)
 
 def run(*args):
 	responseData = args[0]

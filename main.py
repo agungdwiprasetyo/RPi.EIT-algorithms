@@ -3,7 +3,7 @@ from __future__ import division, absolute_import, print_function
 from run import run
 from socketIO_client import SocketIO, LoggingNamespace
 
-host = 'localhost'
+host = 'http://localhost'
 port = 3456
 
 socketIO = SocketIO(host, port, LoggingNamespace)
