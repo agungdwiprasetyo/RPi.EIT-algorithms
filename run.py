@@ -63,7 +63,7 @@ def run(*args):
 	print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 
 	# impor data from EIT instrument, and result from FEM
-	data = np.loadtxt("data/"+dataVolt+".txt")
+	data = np.loadtxt("data/"+dataVolt)
 	ref = f0.v
 
 	# ----------------------------------------- solve inverse problem with BP -------------------------------------------
@@ -95,6 +95,9 @@ def run(*args):
 		fin = time.time()
 		waktu+=(fin-start)
 		print("Waktu Inverse Problem Solver (GREIT) = %.4f" %(fin-start))
+
+	elif(algor=="ART"):
+		print("Algebraic")
 	# ------------------------------------------------- END inverse problem --------------------------------------------
 
 	fig = plt.figure()
