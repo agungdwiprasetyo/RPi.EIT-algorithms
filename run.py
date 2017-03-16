@@ -1,3 +1,4 @@
+from __future__ import division, absolute_import, print_function
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
@@ -11,11 +12,10 @@ from EIT.GREIT import GREIT
 
 from socketIO_client import SocketIO, LoggingNamespace
 from API.API import API
+from config import * # import main variable
 
 import time
 
-host = 'http://localhost'
-port = 3456
 
 socketIO = SocketIO(host, port, LoggingNamespace)
 api = API(host, port)
@@ -23,13 +23,14 @@ api = API(host, port)
 def run(*args):
 	responseData = args[0]
 	print(responseData)
-	sizeImage = (12,12)
-	axisSize = [-1.2, 1.2, -1.2, 1.2]
+
+	axisSize = [-1, 1, -1, 1]
 	jumlahElektroda = 16
 	arusInjeksi = responseData['arus'] #default 7.5 miliAmpere
 	kerapatan = responseData['kerapatan']
-	dataVolt = responseData['data']
-	algor = responseData['algor']
+	iddata = responseData['iddata']
+	dataVolt = str(responseData['data'])
+	algor = str(responseData['algor'])
 	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	waktu = 0
 	direktori = "../rpieit-web/img/results/"
@@ -53,7 +54,7 @@ def run(*args):
 	step = 1
 	exMat = EIT_scanLines(jumlahElektroda)
 
-	# solve Forward Model
+	# ----------------------------------------- solve Forward Model with FEM -------------------------------------------
 	print("Starting reconstruction with "+algor+"...")
 	start = time.time()
 	forward = Forward(mesh, elPos)
@@ -72,7 +73,6 @@ def run(*args):
 		inverseBP = BackProjection(mesh=mesh, forward=f0)
 		resInverse = inverseBP.solveGramSchmidt(data, ref)
 		fin = time.time()
-		waktu+=(fin-start)
 		print("Waktu Inverse Problem Solver (BP)  = %.4f" %(fin-start))
 
 	# ------------------------------------------ solve inverse problem with Jacobian ------------------------------------
@@ -82,7 +82,6 @@ def run(*args):
 		hasilJAC = inverseJAC.solve(data, ref)
 		resInverse = np.real(hasilJAC)
 		fin = time.time()
-		waktu+=(fin-start)
 		print("Waktu Inverse Problem Solver (JAC) = %.4f" %(fin-start))
 
 	# ------------------------------------------- solve inverse problem with GREIT -------------------------------------
@@ -93,35 +92,33 @@ def run(*args):
 		x, y, hasilGREIT = inverseGREIT.mask_value(ds, mask_value=np.NAN)
 		resInverse = np.real(hasilGREIT)
 		fin = time.time()
-		waktu+=(fin-start)
 		print("Waktu Inverse Problem Solver (GREIT) = %.4f" %(fin-start))
 
 	elif(algor=="ART"):
 		print("Algebraic")
 	# ------------------------------------------------- END inverse problem --------------------------------------------
 
+	waktu+=(fin-start)
+
 	fig = plt.figure()
 	ax1 = fig.add_subplot(111)
 	if(algor=="GREIT"):
-		im = ax1.imshow(resInverse, interpolation='nearest')
-		# fig.colorbar(im)
+		im = ax1.imshow(resInverse, interpolation='none')
+		ax1.axis([-1, 1, -1, 1])
+		fig.set_size_inches(6,6)
+		plt.axis('off')
+		ax1.axis('equal')
 	else:
-		ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, resInverse)
-	ax1.axis('equal')
-	plt.axis([-1, 1, -1, 1])
-	fig.set_size_inches(6, 6)
-	plt.axis('off')
-	fig.savefig(direktori+filename, dpi=300)
-	plt.show()
-
-	# # plot image from GREIT
-	# ax4 = fig.add_subplot(gs[1, 1])
-	# ax4.imshow(np.real(hasilGREIT), interpolation='nearest')
-	# ax4.set_title(r'(d) GREIT')
-	# ax4.axis('off')
+		im = ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, resInverse)
+		ax1.axis('equal')
+		ax1.axis([-1, 1, -1, 1])
+		fig.set_size_inches(6,6)
+		plt.axis('off')
+		
+	if(responseData['colorbar']):
+		fig.colorbar(im)
 
 	print('Finish')
-	socketIO.emit('status', {'sukses': True, 'waktu': int(waktu)})
-	api.postImage(filename, kerapatan, arusInjeksi, algor, dataVolt)
-
-	plt.show()
+	fig.savefig(direktori+filename, dpi=300)
+	api.postImage(filename, kerapatan, algor, iddata)
+	socketIO.emit('finishReconstruction', {'sukses': True, 'waktu': int(waktu), 'filename': filename})
