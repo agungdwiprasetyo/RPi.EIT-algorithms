@@ -20,7 +20,7 @@ class BackProjection(EITBase):
 		hasil = np.dot(self.H.transpose(), vn)
 		return np.real(hasil)
 
-	def solveGramSchmidt(self, v1, v0):
+	def solveGramSchmidt(self, v1, v0): # https://en.wikipedia.org/wiki/Gram–Schmidt_process
 		a = np.dot(v1, v0)/np.dot(v0, v0)
 		vn = -(v1 - a*v0)/np.sign(v0)
 		hasil = np.dot(self.H.transpose(), vn)
