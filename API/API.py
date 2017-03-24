@@ -12,6 +12,6 @@ class API(object):
 		response = requests.post(url, data, headers=self.headers)
 		print(response.text)
 
-	def postData():
+	def postData(self):
 		url = self.host+'/data'
 		

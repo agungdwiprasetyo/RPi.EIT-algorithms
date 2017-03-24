@@ -1,7 +1,6 @@
 from __future__ import division, absolute_import, print_function
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 
 from mesh.Mesh import Mesh
 from EIT.FEM import Forward
@@ -33,7 +32,7 @@ def run(*args):
 	algor = str(responseData['algor'])
 	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	waktu = 0
-	direktori = "../rpieit-web/img/results/"
+	direktori = "./rpieit-web/img/results/"
 	filename = str(datetime)+'-'+algor+'.png'
 
 	createMesh = Mesh(jumlahElektroda, h0=kerapatan)
@@ -64,7 +63,7 @@ def run(*args):
 	print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 
 	# impor data from EIT instrument, and result from FEM
-	data = np.loadtxt("data/"+dataVolt)
+	data = np.loadtxt("./rpieit-web/data/"+dataVolt)
 	ref = f0.v
 
 	# ----------------------------------------- solve inverse problem with BP -------------------------------------------
@@ -104,14 +103,14 @@ def run(*args):
 	ax1 = fig.add_subplot(111)
 	if(algor=="GREIT"):
 		im = ax1.imshow(resInverse, interpolation='none')
-		ax1.axis([-1, 1, -1, 1])
+		ax1.axis(axisSize)
 		fig.set_size_inches(6,6)
 		plt.axis('off')
 		ax1.axis('equal')
 	else:
 		im = ax1.tripcolor(nodeXY[:, 0], nodeXY[:, 1], element, resInverse)
 		ax1.axis('equal')
-		ax1.axis([-1, 1, -1, 1])
+		ax1.axis(axisSize)
 		fig.set_size_inches(6,6)
 		plt.axis('off')
 		
