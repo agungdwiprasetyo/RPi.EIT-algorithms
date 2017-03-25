@@ -25,10 +25,11 @@ def run(*args):
 
 	axisSize = [-1, 1, -1, 1]
 	jumlahElektroda = 16
+	tipe = str(responseData['tipe'])
 	arusInjeksi = responseData['arus'] #default 7.5 miliAmpere
 	kerapatan = responseData['kerapatan']
 	iddata = responseData['iddata']
-	dataVolt = str(responseData['data'])
+	dataVolt = responseData['data']
 	algor = str(responseData['algor'])
 	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	waktu = 0
@@ -63,7 +64,10 @@ def run(*args):
 	print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 
 	# impor data from EIT instrument, and result from FEM
-	data = np.loadtxt("./rpieit-web/data/"+dataVolt)
+	if(tipe == "fromraspi"):
+		data = np.hstack(dataVolt)
+	else:
+		data = np.loadtxt("./rpieit-web/data/"+str(dataVolt))
 	ref = f0.v
 
 	# ----------------------------------------- solve inverse problem with BP -------------------------------------------
