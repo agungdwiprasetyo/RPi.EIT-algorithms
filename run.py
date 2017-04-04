@@ -33,7 +33,7 @@ def run(*args):
 	algor = str(responseData['algor'])
 	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	waktu = 0
-	direktori = "./rpieit-web/img/results/"
+	direktori = "./RPi.EIT-web/img/results/"
 	filename = str(datetime)+'-'+algor+'.png'
 
 	createMesh = Mesh(jumlahElektroda, h0=kerapatan)
@@ -67,7 +67,7 @@ def run(*args):
 	if(tipe == "fromraspi"):
 		data = np.hstack(dataVolt)
 	else:
-		data = np.loadtxt("./rpieit-web/data/"+str(dataVolt))
+		data = np.loadtxt("./RPi.EIT-web/data/"+str(dataVolt))
 
 	ref = f0.v
 
