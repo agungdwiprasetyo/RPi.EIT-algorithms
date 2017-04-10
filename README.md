@@ -11,17 +11,20 @@ Ada tambahan satu algoritma rekonstruksi untuk Inverse Problem, yaitu Simultaneo
 
 ## Requirements
 
-Versi python yang digunakan yaitu Python 3.5, dan menggunakan sistem operasi Linux 64-bit. Adapun beberapa library yang dibutuhkan supaya dapat menjalankan program dalam repositori ini adalah sebagai berikut:
+Versi python yang digunakan yaitu Python 3.5, dan menggunakan sistem operasi Linux 64-bit. Install ```python-pip``` dan ```python-dev```. 
+
+```$ sudo apt-get install python3-pip python3-dev```
+
+Kemudian beberapa library yang dibutuhkan supaya dapat menjalankan program dalam repositori ini adalah sebagai berikut:
 
 | Library  | Command |
 | ---- | ---- |
-| **numpy** | ```$ sudo apt-get install python3-numpy``` |
-| **scipy** | ```$ sudo apt-get install python3-scipy``` |
-| **matplotlib** | ```$ sudo apt-get install python3-matplotlib``` |
-| **vispy** | ```$ sudo apt-get install python3-vispy``` |
-| **pandas** | ```$ sudo apt-get install python3-pandas``` |
-| **xarray** | ```$ sudo apt-get install python3-xarray``` |
-| **distmesh** | ```$ sudo apt-get install python3-distmesh``` |
+| **numpy** | ```$ sudo python3 -m pip install numpy``` |
+| **scipy** | ```$ sudo python3 -m pip install scipy``` |
+| **matplotlib** | ```$ sudo python3 -m pip install matplotlib``` |
+| **vispy** | ```$ sudo python3 -m pip install vispy``` |
+| **pandas** | ```$ sudo python3 -m pip install pandas``` |
+| **xarray** | ```$ sudo python3 -m pip install xarray``` |
 
 
 ## Rancangan Sistem

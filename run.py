@@ -49,7 +49,7 @@ def run(*args):
 	           {'x': 0.46, 'y': 0.5, 'd': 0.3, 'alpha': 20}]
 	alpha1 = createMesh.setAlpha(anomaly=anomaly ,background=arusInjeksi) 
 
-	deltaAlpha = np.real(alpha1 - alpha0)
+	# deltaAlpha = np.real(alpha1 - alpha0)
 
 	step = 1
 	exMat = EIT_scanLines(jumlahElektroda)
@@ -67,7 +67,7 @@ def run(*args):
 	if(tipe == "fromraspi"):
 		data = np.hstack(dataVolt)
 	else:
-		data = np.loadtxt("./RPi.EIT-web/data/"+str(dataVolt))
+		data = np.loadtxt("./RPi.EIT-web/dataObjek/"+str(dataVolt))
 
 	ref = f0.v
 
