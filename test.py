@@ -15,7 +15,7 @@ nElectrode = 16
 sizeImage = (13,6)
 axisSize = [-1.2, 1.2, -1.2, 1.2]
 
-createMesh = Mesh(nElectrode, h0=0.09)
+createMesh = Mesh(nElectrode, h0=0.08)
 mesh = createMesh.getMesh()
 elPos = createMesh.getElectrode()
 
@@ -33,9 +33,11 @@ deltaAlpha = np.real(alpha1 - alpha0)
 step = 1
 
 exMat = EIT_scanLines(nElectrode)
-
+start = time.time()
 forward = Forward(mesh, elPos)
 f0 = forward.solve(exMat, step=step, perm=alpha0)
+fin = time.time()
+print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 f1 = forward.solve(exMat, step=step, perm=alpha1)
 
 inverse = BackProjection(mesh=mesh, forward=f0)
