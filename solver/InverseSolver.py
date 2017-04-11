@@ -2,6 +2,7 @@ from EIT.BackProjection import BackProjection
 from EIT.Jacobian import Jacobian
 from EIT.GREIT import GREIT
 
+import numpy as np
 import matplotlib.pyplot as plt
 
 class InverseSolver(object):
@@ -22,11 +23,14 @@ class InverseSolver(object):
 
         elif algor=="JAC":
             inverse = Jacobian(self.mesh, self.forward)
-            self.result = inverse.solve(data, self.ref)
+            self.result = np.real(inverse.solve(data, self.ref))
 
         elif algor=="GREIT":
             inverse = GREIT(self.mesh, self.forward)
-            self.result = inverse.solve(data, self.ref)
+            inverse.setup(p=0.50, lamb=1e-4)
+            ds = inverse.solve(data, self.ref)
+            x, y, ds = inverse.mask_value(ds, mask_value=np.NAN)
+            self.result = np.real(ds)
 
     def plot(self, size, colorbar):
         fig = plt.figure()

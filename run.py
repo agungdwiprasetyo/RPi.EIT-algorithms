@@ -49,7 +49,7 @@ def run(*args):
 
 	# Solve model with forward problem (FEM)
 	forward = Forward(mesh, elPos)
-	f0 = forward.solve(exMat, step=step, perm=alpha0)
+	f0 = forward.solve(exMat=exMat, step=step, perm=alpha0)
 
 	# Solve inverse problem
 	inv = InverseSolver(mesh=mesh, forward=f0)

@@ -15,7 +15,7 @@ nElectrode = 16
 sizeImage = (13,6)
 axisSize = [-1.2, 1.2, -1.2, 1.2]
 
-createMesh = Mesh(nElectrode, h0=0.08)
+createMesh = Mesh(nElectrode, h0=0.05)
 mesh = createMesh.getMesh()
 elPos = createMesh.getElectrode()
 

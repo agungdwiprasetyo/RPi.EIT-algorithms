@@ -3,8 +3,7 @@ from __future__ import division, absolute_import, print_function
 from collections import namedtuple
 import numpy as np
 import scipy.linalg as la
-
-from .utils import EIT_scanLines
+import multiprocessing as mp
 
 class Forward(object):
 	def __init__(self, mesh, elPos):
@@ -16,20 +15,27 @@ class Forward(object):
 		self.elNum, self.nVertices = self.element.shape
 
 	def solve(self, exMat=None, step=1, perm=None, parser=None):
+		pool = mp.Pool(processes=mp.cpu_count())
+		self.step=step
+		self.parser=parser
+		self.exMat=exMat
+
 		if perm is not None:
 			triPerm = perm
 		else:
 			triPerm = self.triPerm
 
-		if exMat is None:
-			exMat = EIT_scanLines(16, 8)
 		numLines = np.shape(exMat)[0]
+		self.numlines = numLines
 
 		output = ['jac', 'v', 'b_matrix']
 		jacobian, v, b_matrix = [], [], [] # output
+
+		# parallel = pool.map(self.build_output, range(numLines))	# 24.768184900283813
+
 		for i in range(numLines):
 			# FEM solver
-			exLine = exMat[i]
+			exLine = self.exMat[i]
 			f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
 
 			# electrode
@@ -49,7 +55,7 @@ class Forward(object):
 		hasil = pde_result(jac=np.vstack(jacobian), v=np.hstack(v), b_matrix=np.vstack(b_matrix))
 		return hasil
 
-	def solveOnce(self, exLine, triPerm=None):
+	def solveOnce(self, exLine, triPerm):
 		b = self.naturalBoundary(exLine=exLine)
 
 		refElec = self.elPos[0]

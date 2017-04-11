@@ -1,7 +1,7 @@
 import numpy as np 
 import scipy as sp
 import scipy.ndimage as spn
-from multiprocess import multiprocess, worker
+from multiproc import multiprocess, worker
 import pdb
 import itertools
 import time
@@ -67,7 +67,7 @@ class pysart(object):
 						
 					self.do_closeout(multip)
 					if i%10==0:
-						print 'Iter: {:d}, Proj: {:d}, Duration: {:3.2f} sec'.format(it, i, time.time()-then)
+						print ('Iter: {:d}, Proj: {:d}, Duration: {:3.2f} sec'.format(it, i, time.time()-then))
 
 				if it==0:
 					self.reco+=self.upd/(self.wij_sum+0.1)
