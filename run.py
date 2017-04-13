@@ -56,7 +56,7 @@ def run(*args):
 	inv.solve(algor=algor, data=data)
 
 	# plot
-	fig = inv.plot(size=axisSize,colorbar=responseData['colorbar'])
+	fig = inv.plot(size=axisSize,colorbar=responseData['colorbar'], showPlot=False)
 	fig.savefig(direktori+filename, dpi=300)
 	waktu = time.time()-waktu
 

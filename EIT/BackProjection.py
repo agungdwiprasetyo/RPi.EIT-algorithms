@@ -27,7 +27,7 @@ class BackProjection(EITBase):
 		return np.real(hasil)
 
 	def simpleWeight(self, numVoltages):
-		d = np.sqrt(np.sum(self.nodeXY**2, axis=1))
+		d = np.sqrt(np.sum(self.node**2, axis=1))
 		r = np.max(d)
 		w = (1.01*r - d)/(1.01*r)
 

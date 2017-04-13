@@ -10,20 +10,22 @@ class InverseSolver(object):
         self.forward = forward
         self.ref = forward.v
         self.mesh = mesh
-        nodeXY = mesh['node']
+        node = mesh['node']
         self.element = mesh['element']
-        self.nodeX = nodeXY[:, 0]
-        self.nodeY = nodeXY[:, 1]
+        self.nodeX = node[:,0]
+        self.nodeY = node[:,1]
 
     def solve(self, algor, data):
         self.algor = algor
         if algor=="BP":
             inverse = BackProjection(self.mesh, self.forward)
+            inverse.setup(weight="simple")
             self.result = inverse.solveGramSchmidt(data, self.ref)
 
         elif algor=="JAC":
             inverse = Jacobian(self.mesh, self.forward)
-            self.result = np.real(inverse.solve(data, self.ref))
+            inverse.setup(p=0.40, lamb=1e-4, method='kotre')
+            self.result = inverse.solveGramSchmidt(data, self.ref)
 
         elif algor=="GREIT":
             inverse = GREIT(self.mesh, self.forward)
@@ -32,7 +34,7 @@ class InverseSolver(object):
             x, y, ds = inverse.mask_value(ds, mask_value=np.NAN)
             self.result = np.real(ds)
 
-    def plot(self, size, colorbar):
+    def plot(self, size, colorbar, showPlot):
         fig = plt.figure()
         ax1 = fig.add_subplot(111)
 
@@ -53,5 +55,7 @@ class InverseSolver(object):
         if colorbar:
             fig.colorbar(im)
 
-        # plt.show()
+        if showPlot:
+            plt.show()
+
         return fig

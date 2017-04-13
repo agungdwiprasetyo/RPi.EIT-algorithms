@@ -21,7 +21,7 @@ class Jacobian(EITBase):
         """
         # pre-compute H0 for dynamical imaging
         # H = (J.T*J + R)^(-1) * J.T
-        self.H = h_matrix(self.jacobian, p, lamb, method)
+        self.H = h_matrix(self.jacobian, p, lamb, method) # H = solusi
         self.params = {
             'p': p,
             'lamb': lamb,
@@ -60,13 +60,13 @@ class Jacobian(EITBase):
         """ return Hv """
         return -np.dot(self.H, v)
 
-    def solve_gs(self, v1, v0):
-        """ solving by weighted frequency """
+    def solveGramSchmidt(self, v1, v0):
+        """ solving by weighted frequency / Gram-Schmidt"""
         a = np.dot(v1, v0) / np.dot(v0, v0)
-        dv = (v1 - a*v0)
+        dv = (v1 - a*v0)    # (v1 - a*v0)/np.sign(v0)
         ds = -np.dot(self.H, dv)
         # return average epsilon on element
-        return ds
+        return np.real(ds)
 
     def bp_solve(self, v1, v0, normalize=False):
         """ solve via a 'naive' back projection. """
