@@ -57,6 +57,12 @@ class GREIT(EITBase):
             dv = v1 - v0
         return -np.dot(self.H, dv)
 
+    def solveGramSchmidt(self, v1, v0):
+        a = np.dot(v1, v0) / np.dot(v0, v0)
+        dv = (v1 - a * v0)  # (v1 - a*v0)/np.sign(v0)
+        ds = -np.dot(self.H, dv)
+        return np.real(ds)
+
     def map(self, v):
         """ return H*v """
         return -np.dot(self.H, v)

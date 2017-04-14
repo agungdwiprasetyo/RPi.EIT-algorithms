@@ -23,6 +23,7 @@ def run(*args):
 	axisSize = [-1, 1, -1, 1]
 	jumlahElektroda = 16
 	tipe = str(responseData['tipe'])
+	token = str(responseData['token'])
 	arusInjeksi = responseData['arus'] #default 7.5 miliAmpere
 	kerapatan = responseData['kerapatan']
 	iddata = responseData['iddata']
@@ -62,4 +63,4 @@ def run(*args):
 
 	# report to server
 	api.postImage(filename, kerapatan, algor, iddata)
-	socketIO.emit('finishReconstruction', {'sukses': True, 'waktu': int(waktu), 'filename': filename})
+	socketIO.emit('finishReconstruction', {'sukses': True, 'waktu': int(waktu), 'filename': filename, 'session':tipe, 'token':token})

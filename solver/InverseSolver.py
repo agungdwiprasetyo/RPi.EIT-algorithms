@@ -30,7 +30,7 @@ class InverseSolver(object):
         elif algor=="GREIT":
             inverse = GREIT(self.mesh, self.forward)
             inverse.setup(p=0.50, lamb=1e-4)
-            ds = inverse.solve(data, self.ref)
+            ds = inverse.solveGramSchmidt(data, self.ref)
             x, y, ds = inverse.mask_value(ds, mask_value=np.NAN)
             self.result = np.real(ds)
 
