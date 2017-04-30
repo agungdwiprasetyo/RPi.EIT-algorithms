@@ -34,11 +34,13 @@ forward = Forward(mesh, elPos)
 f0 = forward.solve(exMat, step=step, perm=alpha0)
 fin = time.time()
 print("Waktu Forward Problem Solver = %.4f" %(fin-start))
-f1 = forward.solve(exMat, step=step, perm=alpha1)
+# f1 = forward.solve(exMat, step=step, perm=alpha1)
 
-data = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomB.txt")
+data = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomBSimulasiNew.txt")
 
 # Algor--> BP=Back Projection, JAC=Jacobian, GREIT=Graz
+start2 = time.time()
 inverse = InverseSolver(mesh=mesh, forward=f0)
-inverse.solve(algor="GREIT", data=data)
+inverse.solve(algor="BP", data=data)
+print("Waktu inverse Problem Solver = %.4f" %(time.time()-start2))
 inverse.plot(size=[-1, 1, -1, 1], colorbar=False, showPlot=True)

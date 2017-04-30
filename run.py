@@ -32,7 +32,12 @@ def run(*args):
 	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	waktu = time.time()
 	direktori = "./RPi.EIT-web/img/results/"
-	filename = str(datetime)+'-'+algor+'.png'
+
+	if responseData['colorbar']:
+		colorbar=1
+	else:
+		colorbar=0
+	filename = str(datetime)+'-'+algor+'-'+str(colorbar)+'.png'
 
 	# set simulation model
 	createMesh = Mesh(jumlahElektroda, h0=kerapatan)

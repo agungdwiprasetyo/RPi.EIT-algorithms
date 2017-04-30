@@ -4,6 +4,24 @@ from collections import namedtuple
 import numpy as np
 import scipy.linalg as la
 import multiprocessing as mp
+import numba as nb
+from numba import jit, autojit
+from .Matrix import InverseMatrix as IM
+from time import time
+
+import multiprocessing.pool
+class NoDaemonProcess(multiprocessing.Process):
+	# make 'daemon' attribute always return False
+	def _get_daemon(self):
+		return False
+	def _set_daemon(self, value):
+		pass
+	daemon = property(_get_daemon, _set_daemon)
+
+# We sub-class multiprocessing.pool.Pool instead of multiprocessing.Pool
+# because the latter is only a wrapper function, not a proper class.
+class NoDaemonProcessPool(multiprocessing.pool.Pool):
+	Process = NoDaemonProcess
 
 class Forward(object):
 	def __init__(self, mesh, elPos):
@@ -31,38 +49,62 @@ class Forward(object):
 		output = ['jac', 'v', 'b_matrix']
 		jacobian, v, b_matrix = [], [], [] # output
 
-		# parallel = pool.map(self.build_output, range(numLines))	# 24.768184900283813
+		parallel = pool.map(self.solveJacMp, range(numLines))	# 24.768184900283813
+		# pool.close()
+		# pool.join()
+		for z in parallel:
+			v.append(z[0])
+			jacobian.append(z[1])
+			b_matrix.append(z[2])
 
-		for i in range(numLines):
-			# FEM solver
-			exLine = self.exMat[i]
-			f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
-
-			# electrode
-			diffArray = self.diffPairs(exLine, step, parser)
-			vDiff = self.diff(f[self.elPos], diffArray)
-			JAC_diff = self.diff(JAC_i, diffArray)
-
-			fElement = f[self.elPos]
-			b = self.smear(f, fElement, diffArray)
-
-			v.append(vDiff)
-			jacobian.append(JAC_diff)
-			b_matrix.append(b)
+		# for i in range(numLines):
+		# 	# FEM solver
+		# 	exLine = self.exMat[i]
+		# 	f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
+        #
+		# 	# electrode
+		# 	diffArray = self.diffPairs(exLine, step, parser)
+		# 	vDiff = self.diff(f[self.elPos], diffArray)
+		# 	JAC_diff = self.diff(JAC_i, diffArray)
+        #
+		# 	fElement = f[self.elPos]
+		# 	b = self.smear(f, fElement, diffArray)
+        #
+		# 	v.append(vDiff)
+		# 	jacobian.append(JAC_diff)
+		# 	b_matrix.append(b)
 
 		# update output
 		pde_result = namedtuple("pde_result", output)
 		hasil = pde_result(jac=np.vstack(jacobian), v=np.hstack(v), b_matrix=np.vstack(b_matrix))
 		return hasil
 
+	def solveJacMp(self, i):
+		# FEM solver
+		exLine = self.exMat[i]
+		f, JAC_i = self.solveOnce(exLine=exLine, triPerm=self.triPerm)
+
+		# electrode
+		diffArray = self.diffPairs(exLine, self.step, self.parser)
+		vDiff = self.diff(f[self.elPos], diffArray)
+		JAC_diff = self.diff(JAC_i, diffArray)
+
+		fElement = f[self.elPos]
+		b = self.smear(f, fElement, diffArray)
+		return [vDiff,JAC_diff,b]
+
 	def solveOnce(self, exLine, triPerm):
 		b = self.naturalBoundary(exLine=exLine)
-
 		refElec = self.elPos[0]
 		kGlobal, kElement = self.assemble(self.nodeXY, self.element, perm=triPerm, ref=refElec)
+		# print(kGlobal.dtype)
 
 		# electrode impedance
-		rMatrix = la.inv(kGlobal) # scipy use here
+		start =  time()
+		rMatrix = la.inv(kGlobal) # scipy use here, lama
+		# rMatrix = IM.inverse(kGlobal)
+		print("time inverse=",time()-start)
+
 		# nodes potential
 		f = np.dot(rMatrix, b).ravel()
 
