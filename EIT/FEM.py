@@ -24,7 +24,7 @@ class NoDaemonProcessPool(multiprocessing.pool.Pool):
 	Process = NoDaemonProcess
 
 class Forward(object):
-	def __init__(self, mesh, elPos, useMultiprocessing=False):
+	def __init__(self, mesh, elPos, useMultiprocessing=True):
 		self.nodeXY = mesh['node']
 		self.element = mesh['element']
 		self.triPerm = mesh['alpha']
