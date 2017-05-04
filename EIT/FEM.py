@@ -24,13 +24,14 @@ class NoDaemonProcessPool(multiprocessing.pool.Pool):
 	Process = NoDaemonProcess
 
 class Forward(object):
-	def __init__(self, mesh, elPos):
+	def __init__(self, mesh, elPos, useMultiprocessing=False):
 		self.nodeXY = mesh['node']
 		self.element = mesh['element']
 		self.triPerm = mesh['alpha']
 		self.elPos = elPos
 		self.noNum, self.dim = self.nodeXY.shape
 		self.elNum, self.nVertices = self.element.shape
+		self.useMultiprocessing = useMultiprocessing
 
 	def solve(self, exMat=None, step=1, perm=None, parser=None):
 		pool = mp.Pool(processes=mp.cpu_count())
@@ -49,30 +50,29 @@ class Forward(object):
 		output = ['jac', 'v', 'b_matrix']
 		jacobian, v, b_matrix = [], [], [] # output
 
-		parallel = pool.map(self.solveJacMp, range(numLines))	# 24.768184900283813
-		# pool.close()
-		# pool.join()
-		for z in parallel:
-			v.append(z[0])
-			jacobian.append(z[1])
-			b_matrix.append(z[2])
+		if self.useMultiprocessing:
+			parallel = pool.map(self.solveJacMp, range(numLines))	# 24.768184900283813
+			for z in parallel:
+				v.append(z[0])
+				jacobian.append(z[1])
+				b_matrix.append(z[2])
+		else:
+			for i in range(numLines):
+				# FEM solver
+				exLine = self.exMat[i]
+				f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
 
-		# for i in range(numLines):
-		# 	# FEM solver
-		# 	exLine = self.exMat[i]
-		# 	f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
-        #
-		# 	# electrode
-		# 	diffArray = self.diffPairs(exLine, step, parser)
-		# 	vDiff = self.diff(f[self.elPos], diffArray)
-		# 	JAC_diff = self.diff(JAC_i, diffArray)
-        #
-		# 	fElement = f[self.elPos]
-		# 	b = self.smear(f, fElement, diffArray)
-        #
-		# 	v.append(vDiff)
-		# 	jacobian.append(JAC_diff)
-		# 	b_matrix.append(b)
+				# electrode
+				diffArray = self.diffPairs(exLine, step, parser)
+				vDiff = self.diff(f[self.elPos], diffArray)
+				JAC_diff = self.diff(JAC_i, diffArray)
+
+				fElement = f[self.elPos]
+				b = self.smear(f, fElement, diffArray)
+
+				v.append(vDiff)
+				jacobian.append(JAC_diff)
+				b_matrix.append(b)
 
 		# update output
 		pde_result = namedtuple("pde_result", output)
