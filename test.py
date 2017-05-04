@@ -13,7 +13,7 @@ nElectrode = 16
 sizeImage = (13,6)
 axisSize = [-1.2, 1.2, -1.2, 1.2]
 
-createMesh = Mesh(nElectrode, h0=0.05)
+createMesh = Mesh(nElectrode, h0=0.08)
 mesh = createMesh.getMesh()
 elPos = createMesh.getElectrode()
 
@@ -35,8 +35,8 @@ f0 = forward.solve(exMat, step=step, perm=alpha0)
 fin = time.time()
 print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 # f1 = forward.solve(exMat, step=step, perm=alpha1)
-
-data = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomBSimulasiNew.txt")
+print(f0.jac.shape)
+data = np.loadtxt("../RPi.EIT-web/dataObjek/DataPenelitianTumit.txt")
 
 # Algor--> BP=Back Projection, JAC=Jacobian, GREIT=Graz
 start2 = time.time()

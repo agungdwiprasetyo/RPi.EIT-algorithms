@@ -100,10 +100,8 @@ class Forward(object):
 		# print(kGlobal.dtype)
 
 		# electrode impedance
-		start =  time()
 		rMatrix = la.inv(kGlobal) # scipy use here, lama
 		# rMatrix = IM.inverse(kGlobal)
-		print("time inverse=",time()-start)
 
 		# nodes potential
 		f = np.dot(rMatrix, b).ravel()
