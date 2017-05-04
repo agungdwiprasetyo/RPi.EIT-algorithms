@@ -4,9 +4,9 @@ from collections import namedtuple
 import numpy as np
 import scipy.linalg as la
 import multiprocessing as mp
-import numba as nb
-from numba import jit, autojit
-from .Matrix import InverseMatrix as IM
+# import numba as nb
+# from numba import jit, autojit
+# from .Matrix import InverseMatrix as IM
 from time import time
 
 import multiprocessing.pool
