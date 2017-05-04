@@ -49,30 +49,30 @@ class Forward(object):
 		output = ['jac', 'v', 'b_matrix']
 		jacobian, v, b_matrix = [], [], [] # output
 
-		# parallel = pool.map(self.solveJacMp, range(numLines))	# 24.768184900283813
-		# # pool.close()
-		# # pool.join()
-		# for z in parallel:
-		# 	v.append(z[0])
-		# 	jacobian.append(z[1])
-		# 	b_matrix.append(z[2])
+		parallel = pool.map(self.solveJacMp, range(numLines))	# 24.768184900283813
+		# pool.close()
+		# pool.join()
+		for z in parallel:
+			v.append(z[0])
+			jacobian.append(z[1])
+			b_matrix.append(z[2])
 
-		for i in range(numLines):
-			# FEM solver
-			exLine = self.exMat[i]
-			f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
-
-			# electrode
-			diffArray = self.diffPairs(exLine, step, parser)
-			vDiff = self.diff(f[self.elPos], diffArray)
-			JAC_diff = self.diff(JAC_i, diffArray)
-
-			fElement = f[self.elPos]
-			b = self.smear(f, fElement, diffArray)
-
-			v.append(vDiff)
-			jacobian.append(JAC_diff)
-			b_matrix.append(b)
+		# for i in range(numLines):
+		# 	# FEM solver
+		# 	exLine = self.exMat[i]
+		# 	f, JAC_i = self.solveOnce(exLine=exLine, triPerm=triPerm)
+        #
+		# 	# electrode
+		# 	diffArray = self.diffPairs(exLine, step, parser)
+		# 	vDiff = self.diff(f[self.elPos], diffArray)
+		# 	JAC_diff = self.diff(JAC_i, diffArray)
+        #
+		# 	fElement = f[self.elPos]
+		# 	b = self.smear(f, fElement, diffArray)
+        #
+		# 	v.append(vDiff)
+		# 	jacobian.append(JAC_diff)
+		# 	b_matrix.append(b)
 
 		# update output
 		pde_result = namedtuple("pde_result", output)
