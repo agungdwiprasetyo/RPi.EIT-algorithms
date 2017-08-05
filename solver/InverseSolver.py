@@ -15,7 +15,7 @@ class InverseSolver(object):
         self.nodeX = node[:,0]
         self.nodeY = node[:,1]
 
-    def solve(self, algor, data):
+    def solve(self, data, algor="BP"):
         self.algor = algor
         if algor=="BP":
             inverse = BackProjection(self.mesh, self.forward)
@@ -33,6 +33,7 @@ class InverseSolver(object):
             ds = inverse.solveGramSchmidt(data, self.ref)
             x, y, ds = inverse.mask_value(ds, mask_value=np.NAN)
             self.result = np.real(ds)
+        return self.result
 
     def plot(self, size, colorbar, showPlot):
         fig = plt.figure()

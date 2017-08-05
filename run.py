@@ -17,22 +17,22 @@ api = API(host, port)
 
 def run(*args):
 	responseData = args[0]
-	print(responseData)
 
-	# generate parameter
-	axisSize = [-1, 1, -1, 1]
-	jumlahElektroda = 16
+	# get parameter
 	tipe = str(responseData['tipe'])
 	token = str(responseData['token'])
-	arusInjeksi = responseData['arus'] #default 7.5 miliAmpere
+	arusInjeksi = responseData['arus']
 	kerapatan = responseData['kerapatan']
 	iddata = responseData['iddata']
 	dataVolt = responseData['data']
 	algor = str(responseData['algor'])
-	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
+
 	waktu = time.time()
 	direktori = "./RPi.EIT-web/img/results/"
 
+	axisSize = [-1, 1, -1, 1]
+	jumlahElektroda = 16
+	datetime = (time.strftime("%Y%m%d-") + time.strftime("%H%M%S"))
 	if responseData['colorbar']:
 		colorbar=1
 	else:
