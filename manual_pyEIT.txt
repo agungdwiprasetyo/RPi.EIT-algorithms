@@ -1,0 +1,27 @@
+Untuk memulai menggunakan pyEIT, pastikan komputer anda sudah terinstal python versi 3.5
+Jika interpreter python sudah tersedia, pasang library-library berikut ini:
+
+Library		Command
+numpy		$ sudo python3 -m pip install numpy
+scipy		$ sudo python3 -m pip install scipy
+matplotlib	$ sudo python3 -m pip install matplotlib
+vispy		$ sudo python3 -m pip install vispy
+pandas		$ sudo python3 -m pip install pandas
+xarray		$ sudo python3 -m pip install xarray
+
+Clone repository dari link berikut: https://github.com/agungdwiprasetyo/RPi.EIT-algorithms
+$ git clone https://github.com/agungdwiprasetyo/RPi.EIT-algorithms
+
+
+Pada file test.py dapat dijelaskan sebagai berikut:
+Langkah pertama, import beberapa kelas yang dibutuhkan untuk menjalankan program pyEIT, kelas-kelas tersebut antara lain sebagai berikut:
+
+from mesh.Mesh import Mesh
+from EIT.FEM import Forward
+from EIT.utils import EIT_scanLines
+from solver.InverseSolver import InverseSolver
+
+Class Mesh yaitu berfungsi untuk membangkitkan model EIT (dalam program hanya masih mendukung model 2 dimensi). Untuk memanggil kelas Mesh yaitu sebagai berikut:
+-- 	createMesh = Mesh(16, h0=0.07)
+	parameter pertama (16) menyatakan jumlah elektroda yang digunakan (dalam hal ini ada 16 buah elektroda)
+	parameter kedua (h0) menyatakan nilai kerapatan segitiga mesh dalam model yang akan dibangkitkan
