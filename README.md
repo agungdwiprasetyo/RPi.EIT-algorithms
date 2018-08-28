@@ -25,7 +25,12 @@ Kemudian beberapa library yang dibutuhkan supaya dapat menjalankan program dalam
 | **vispy** | ```$ sudo python3 -m pip install vispy``` |
 | **pandas** | ```$ sudo python3 -m pip install pandas``` |
 | **xarray** | ```$ sudo python3 -m pip install xarray``` |
+| **socketio** | ```$ sudo python3 -m pip install socketIO-client``` |
 
+
+## Testing
+
+```$ ./test.py```
 
 ## Rancangan Sistem
 

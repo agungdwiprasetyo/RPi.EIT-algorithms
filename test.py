@@ -49,16 +49,16 @@ fin = time.time()
 # print("Waktu Forward Problem Solver = %.4f" %(fin-start))
 print("Penyelesaian forward problem untuk contoh model...")
 resFEM2 = forward.solve(exMat, step=step, perm=alpha1)
-dataA = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomAManualNew.txt")
-dataB = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomBUkurManualNew.txt")
-dataC = np.loadtxt("../RPi.EIT-web/dataObjek/PhantomCSimulasiNew.txt")
+dataA = np.loadtxt("./data/PhantomA.txt")
+dataB = np.loadtxt("./data/PhantomB.txt")
+dataC = np.loadtxt("./data/PhantomC.txt")
 
 # Algor--> BP=Back Projection, JAC=Jacobian, GREIT=Graz
 start2 = time.time()
 print("Penyelesaian inverse problem, menyimpan matriks jacobian dan distribusi potensial...")
 inverse = InverseSolver(mesh=mesh, forward=resFEM1)
 while True:
-	z = input("1. Data contoh model\n"+
+	z = input("1. Data contoh model (hasil penyelesaian forward problem sebelumnya)\n"+
 		"2. Data phantom A\n"+
 		"3. Data phantom B\n"+
 		"4. Data phantom C\n"+
